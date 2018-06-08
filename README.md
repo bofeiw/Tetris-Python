@@ -1,1 +1,2 @@
-# Tetris-in-Python
+# Tetris in Python
+open main to play
