@@ -5,57 +5,65 @@ from clock import Clock
 
 class Squares:
     """method for malipulating squares in the game"""
-    def __init__(self, st, screen):
+    def __init__(self, st, status, screen):
         self.st = st
+        self.status = status
         self.screen = screen
         self.empty_line = [False for i in range(st.square_num_x)]
         self.squares = [self.empty_line.copy() for i in range(st.square_num_y)]
-        self.renew_sq()
+        self.new_sq(self)
         self.clock = Clock(st)
-
-    # generate a new current square
-    def renew_sq(self):
-        self.curr_sq = self.st.new
-        self.curr_shape = self.get_shape(self)
-        # if new squares are crashed, game over.
-        if self.should_stop(self):
-            self.st.game_active = False
 
     # draw all squares
     def draw_squares(self):
+        self.screen.fill(self.st.space_color)
         self.draw_exist_sq(self)
         self.draw_curr_sq(self)
 
     # update squares' information according to settings
     def update(self):
         updated = False # for update screen
-        # crash detection
-        if self.should_stop(self):
-            self.stop(self)
-            self.clean_full_lines(self)
-            updated = True
         # vertical drop
-        if self.st.down or self.clock.is_time_to_drop():
+        if self.clock.is_time_to_drop():
+            updated = True
             self.drop(self)
             self.clock.update_drop()
+        elif self.status.down and self.clock.is_time_to_quick_drop():
+            self.drop(self)
+            self.clock.update_quick_drop()
             updated = True
         # rotation
-        if self.st.rotate and self.clock.is_time_to_rotate():
+        if self.status.rotate and self.clock.is_time_to_rotate():
+            updated = True
             self.rotate(self)
             self.clock.update_rotate()
-            updated = True
         # horizontal move
-        if self.st.right:
+        if self.status.right:
+            updated = True
             if self.clock.is_time_to_move() or self.clock.is_time_to_quick_right():
                 self.right(self)
             self.clock.update_move()
+        if self.status.left:
             updated = True
-        if self.st.left:
             if self.clock.is_time_to_move() or self.clock.is_time_to_quick_left():
                 self.left(self)
             self.clock.update_move()
+        # crash detection
+        if self.should_stop(self):
             updated = True
+            self.stop(self)
+            self.clean_full_lines(self)
+            self.clock.uptate_stop()
         return updated
+
+    # generate a new current square
+    @staticmethod
+    def new_sq(self):
+        self.curr_sq = self.st.new
+        self.curr_shape = self.get_shape(self)
+        # if new squares are crashed, game over.
+        if self.should_stop(self):
+            self.status.game_status = self.status.GAMEOVER
 
     @staticmethod
     def drop(self):
@@ -96,12 +104,13 @@ class Squares:
         y = self.curr_sq[0]
         if y >= 0:
             self.squares[y][x] = True
-        self.renew_sq()
+        self.new_sq(self)
 
     @staticmethod
     def clean_full_lines(self):
         for index, line in enumerate(self.squares):
             if sum(line) == self.st.square_num_x:
+                self.status.score += 1
                 self.squares.pop(index)
                 self.squares.insert(0, self.empty_line)
 
