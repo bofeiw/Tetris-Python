@@ -47,6 +47,7 @@ class Status:
         self.right = False
         self.down = False
         self.rotate = False
+        self.straight_drop = False
 
         # score status
         self.score = 0

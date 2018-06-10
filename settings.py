@@ -3,20 +3,22 @@ import pygame
 class Settings:
     def __init__(self):
         # times and speed, in seconds
-        self.time_drop = 0.4  # period to force drop
+        self.time_drop = 1  # period to force drop
         self.time_move = 0.05 # minimum time interval to move
         self.time_rotate = 0.2 # minimum time interval to rotate
-        self.time_to_quick = 0.2 # time interval to activate quick move mode
+        self.time_to_quick = 0.15 # time interval to activate quick move mode
         self.time_before_drop = 0.3 # time to wait from one stop to drop
         self.time_quick_drop = 0.01 # minimum time interval to drop in quick mode
-        self.time_move_quick = 0.02 # minimum time interval to move in quick mode
+        self.time_move_quick = 0.015 # minimum time interval to move in quick mode
+        self.time_to_straight_drop = 0.3 # time to do another down straight
 
         # colors
         self.bg_color = (30, 30, 30) # black
-        self.square_color = (255, 255, 255) # white
-        self.square_active_color = (255, 0, 0) # red
+        self.square_color = (245, 245, 245) # white
+        self.square_active_color = (245, 0, 0) # red
         self.space_color = (35, 35, 35) # slightly lighter than bg
         self.square_null_color = (45, 45, 45) # dark grey
+        self.border_color = (0, 245, 0) # green
 
         # shapes
         self.shapes = (
@@ -35,7 +37,7 @@ class Settings:
         self.square_num_x = 12
         self.square_num_y = 20
         self.square_space = 5
-        self.new = [0, int(self.square_num_x/2)]    # upper center
+        self.new = [1, int(self.square_num_x/2)]    # upper center
 
         # surfaces
         self.func_width = 300
@@ -54,14 +56,14 @@ class Settings:
         self.score_color = (255, 255, 255) # white
         self.score_pos = (10, 10)
 
-        self.start = "Press any keys to start"
+        self.start = "Press any key to start"
         self.start_font = "Comic Sans MS"
         self.start_size = 200
         self.start_color = (0, 255, 0) # green
         self.start_pos = "center"
         self.start_surface = self.adjust_start_size(self)
 
-        self.game_over = "Press any keys to play again"
+        self.game_over = "Press any key to play again"
         self.game_over_font = self.start_font
         self.game_over_size = self.start_size
         self.game_over_color = (255, 0, 0) # red
@@ -71,9 +73,9 @@ class Settings:
     @staticmethod
     def get_game_size(self):
         x = ((self.square_length + self.square_space)\
-            * self.square_num_x) - self.square_space
+            * self.square_num_x) + self.square_space
         y = ((self.square_length + self.square_space)\
-            * self.square_num_y) - self.square_space
+            * self.square_num_y) + self.square_space
         return (x, y)
 
     @staticmethod

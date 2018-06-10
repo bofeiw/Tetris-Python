@@ -27,9 +27,10 @@ def key_down(sqs, key, status):
     elif key == pygame.K_RIGHT:
         status.right = True
         sqs.clock.update_right_down()
-    # both keys could be used for rotate
-    elif key == pygame.K_UP or key == pygame.K_SPACE:
+    elif key == pygame.K_UP:
         status.rotate = True
+    elif key == pygame.K_SPACE:
+        status.straight_drop = True
 
 # deal with keys that are released
 def key_up(key, status):
@@ -41,6 +42,7 @@ def key_up(key, status):
         status.left = False
     elif key == pygame.K_RIGHT:
         status.right = False
-    # both keys could be used for rotate
-    elif key == pygame.K_UP or key == pygame.K_SPACE:
+    elif key == pygame.K_UP:
         status.rotate = False
+    elif key == pygame.K_SPACE:
+        status.straight_drop = False

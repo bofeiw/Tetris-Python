@@ -12,6 +12,7 @@ class Clock:
         self.last_right_down = clock()
         self.last_quick_drop = clock()
         self.last_stop = clock()
+        self.last_straight_drop = clock()
 
     def update_drop(self):
         self.last_drop = clock()
@@ -34,6 +35,9 @@ class Clock:
     def uptate_stop(self):
         self.last_stop = clock()
 
+    def update_straight_drop(self):
+        self.last_straight_drop = clock()
+
     def is_time_to_drop(self):
         return ((clock() - self.last_drop) > self.st.time_drop)
 
@@ -52,3 +56,6 @@ class Clock:
 
     def is_time_to_quick_right(self):
         return (clock() - self.last_right_down) > self.st.time_to_quick
+
+    def is_time_to_straight_drop(self):
+        return (clock() - self.last_straight_drop) > self.st.time_to_straight_drop
