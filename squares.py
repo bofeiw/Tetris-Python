@@ -35,9 +35,9 @@ class Squares:
             self.clock.update_drop()
         # vertical drop, quick drop
         elif self.status.down and self.clock.is_time_to_quick_drop():
+            updated = True
             self.drop(self)
             self.clock.update_quick_drop()
-            updated = True
         # rotation
         if self.status.rotate and self.clock.is_time_to_rotate():
             updated = True
@@ -58,17 +58,15 @@ class Squares:
         if self.should_stop(self):
             updated = True
             self.stop(self)
-            self.clean_full_lines(self)
-            self.clock.uptate_stop()
         return updated
 
-    # generate a new current square
+    # renew current square
     @staticmethod
     def new_sq(self):
         self.curr_sq = self.st.new.copy()
         self.curr_shape = self.get_shape(self)
         # if new squares are crashed, game over.
-        if self.should_stop(self):
+        if not self.valid(self, self.curr_sq, self.curr_shape):
             self.status.game_status = self.status.GAMEOVER
 
     @staticmethod
@@ -105,6 +103,13 @@ class Squares:
 
     @staticmethod
     def stop(self):
+        # timer
+        if not self.clock.is_time_to_stop():
+            self.clock.update_should_stop(True)
+            return
+        else:
+            self.clock.update_should_stop(None)
+            self.clock.update_stop()
         # copy squares to map
         for sq in self.curr_shape:
             x = sq[1] + self.curr_sq[1]
@@ -115,8 +120,10 @@ class Squares:
         y = self.curr_sq[0]
         if y >= 0:
             self.squares[y][x] = True
+        self.clean_full_lines(self)
         self.new_sq(self)
 
+    # delete full lines and insert empty lines at the front
     @staticmethod
     def clean_full_lines(self):
         for index, line in enumerate(self.squares):
@@ -125,6 +132,7 @@ class Squares:
                 self.squares.pop(index)
                 self.squares.insert(0, self.empty_line.copy())
 
+    # validate current squares of shapes relative to center with with one drop vertically
     @staticmethod
     def should_stop(self):
         # check shape squares
@@ -138,6 +146,7 @@ class Squares:
         y = self.curr_sq[0] + 1
         return not (self.valid_sq(self, [y, x]))
 
+    # validate the given center square and shape squires relative to center square
     @staticmethod
     def valid(self, square, shape):
         # check shape squares

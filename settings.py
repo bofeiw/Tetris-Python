@@ -2,8 +2,9 @@ import pygame
 
 class Settings:
     def __init__(self):
-        # times and speed, in seconds
+        # times or speed, in seconds, you can adjust this if youre not satisfied by the default
         self.time_drop = 1  # period to force drop
+        self.time_stop = 0.5 # time player can adjust pos at bottom
         self.time_move = 0.05 # minimum time interval to move
         self.time_rotate = 0.2 # minimum time interval to rotate
         self.time_to_quick = 0.15 # time interval to activate quick move mode
@@ -12,7 +13,7 @@ class Settings:
         self.time_move_quick = 0.015 # minimum time interval to move in quick mode
         self.time_to_straight_drop = 0.3 # time to do another down straight
 
-        # colors
+        # colors, you can change it to be an artist
         self.bg_color = (30, 30, 30) # black
         self.square_color = (245, 245, 245) # white
         self.square_active_color = (245, 0, 0) # red
@@ -20,15 +21,15 @@ class Settings:
         self.square_null_color = (45, 45, 45) # dark grey
         self.border_color = (0, 245, 0) # green
 
-        # shapes
+        # shapes, dont touch this if you are not clear what this dose
         self.shapes = (
-            ([-1, 0], [0, -1], [0, 1]),
-            ([-1, 0], [0, -1], [-1, 1]),
-            ([-1, 0], [-1, -1], [0, 1]),
-            ([-1, 0], [-1, 1], [0, 1]),
-            ([-1, 0], [-2, 0], [1, 0]),
-            ([-1, -1], [0, -1], [0, 1]),
-            ([1, 1], [0, -1], [0, 1]),
+            ([-1, 0], [0, -1], [0, 1]),   # _|_
+            ([-1, 0], [0, -1], [-1, 1]),  # _|-
+            ([-1, 0], [-1, -1], [0, 1]),  #-|_
+            ([-1, 0], [-1, 1], [0, 1]),   # ::
+            ([-1, 0], [-2, 0], [1, 0]),   # |
+            ([-1, -1], [0, -1], [0, 1]),  # |__
+            ([-1, 1], [0, -1], [0, 1]),   # --|
         )
         self.shape_num = len(self.shapes)
 

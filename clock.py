@@ -12,6 +12,8 @@ class Clock:
         self.last_right_down = clock()
         self.last_quick_drop = clock()
         self.last_stop = clock()
+        self.last_should_stop = None    # for detection of the stop at the very bottom
+        self.stop_detection_started = False
         self.last_straight_drop = clock()
 
     def update_drop(self):
@@ -32,8 +34,16 @@ class Clock:
     def update_quick_drop(self):
         self.last_quick_drop = clock()
 
-    def uptate_stop(self):
+    def update_stop(self):
         self.last_stop = clock()
+
+    def update_should_stop(self, mode):
+        if mode is True and self.stop_detection_started is False:
+            self.last_should_stop = clock()
+            self.stop_detection_started = True
+        elif mode is None:
+            self.stop_detection_started = False
+
 
     def update_straight_drop(self):
         self.last_straight_drop = clock()
@@ -59,3 +69,7 @@ class Clock:
 
     def is_time_to_straight_drop(self):
         return (clock() - self.last_straight_drop) > self.st.time_to_straight_drop
+
+    def is_time_to_stop(self):
+        return  self.stop_detection_started and\
+                ((clock() - self.last_should_stop) > self.st.time_stop)
