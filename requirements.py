@@ -1,3 +1,7 @@
+"""
+this part checks external packages and install if not exist
+"""
+
 requirements = ['pygame']
 import sys
 

@@ -42,12 +42,16 @@ class Status:
     def is_game_renew(self):
         return self.game_status == self.RENEW
 
+    def is_AI(self):
+        return self.AI
+
     def refresh(self):
         self.left = False
         self.right = False
         self.down = False
         self.rotate = False
         self.straight_drop = False
+        self.AI = False
 
         # score status
         self.score = 0

@@ -2,8 +2,9 @@ import pygame
 
 class Settings:
     def __init__(self):
-        # times or speed, in seconds, you can adjust this if youre not satisfied by the default
-        self.time_drop = 1  # period to force drop
+        # times or  speed, in seconds, you can adjust this if youre not satisfied by the default
+        self.time_drop = 0.8  # period to force drop
+        self.time_drop_adjust = 0.99 # every score up, decrease drop time by this factor
         self.time_stop = 0.5 # time player can adjust pos at bottom
         self.time_move = 0.05 # minimum time interval to move
         self.time_rotate = 0.2 # minimum time interval to rotate
@@ -14,22 +15,33 @@ class Settings:
         self.time_to_straight_drop = 0.3 # time to do another down straight
 
         # colors, you can change it to be an artist
+        self.colors = {
+            'black': (0,0,0),
+            'white': (255, 255, 255),
+            'red'  : (255, 0, 0),
+            'green': (0, 255, 0),
+            'blue' : (0, 0, 255),
+            'yellow': (255, 255, 0),
+            'purple': (255, 0, 255),
+            'cyan' : (0, 255, 255),
+
+            'none' : (45, 45, 45),    # dark grey
+            'tip'  : (100, 100, 100)  # grey
+        }
+
         self.bg_color = (30, 30, 30) # black
         self.square_color = (245, 245, 245) # white
-        self.square_active_color = (245, 0, 0) # red
         self.space_color = (35, 35, 35) # slightly lighter than bg
-        self.square_null_color = (45, 45, 45) # dark grey
-        self.border_color = (0, 245, 0) # green
 
         # shapes, dont touch this if you are not clear what this dose
         self.shapes = (
-            ([-1, 0], [0, -1], [0, 1]),   # _|_
-            ([-1, 0], [0, -1], [-1, 1]),  # _|-
-            ([-1, 0], [-1, -1], [0, 1]),  #-|_
-            ([-1, 0], [-1, 1], [0, 1]),   # ::
-            ([-1, 0], [-2, 0], [1, 0]),   # |
-            ([-1, -1], [0, -1], [0, 1]),  # |__
-            ([-1, 1], [0, -1], [0, 1]),   # --|
+            {'pos':([-1, 0], [0, -1], [0, 1]), 'color':'red', 'rotate':4},    # _|_
+            {'pos':([-1, 0], [0, -1], [-1, 1]), 'color':'green', 'rotate':2}, # _|-
+            {'pos':([-1, 0], [-1, -1], [0, 1]), 'color':'blue', 'rotate':2},  #-|_
+            {'pos':([-1, 0], [-1, 1], [0, 1]), 'color':'yellow', 'rotate':1}, # ::
+            {'pos':([-1, 0], [-2, 0], [1, 0]), 'color':'purple', 'rotate':2}, # |
+            {'pos':([-1, -1], [0, -1], [0, 1]), 'color':'cyan', 'rotate':4},  # |__
+            {'pos':([-1, 1], [0, -1], [0, 1]), 'color':'white', 'rotate':4}   # --|
         )
         self.shape_num = len(self.shapes)
 
@@ -57,7 +69,7 @@ class Settings:
         self.score_color = (255, 255, 255) # white
         self.score_pos = (10, 10)
 
-        self.start = "Press any key to start"
+        self.start = "Press any key to start, press A to watch AI play"
         self.start_font = "Comic Sans MS"
         self.start_size = 200
         self.start_color = (0, 255, 0) # green
@@ -70,6 +82,17 @@ class Settings:
         self.game_over_color = (255, 0, 0) # red
         self.game_over_pos = "center"
         self.game_over_surface = self.adjust_game_over_size(self)
+
+    def adjust_for_AI(self):
+        self.time_drop = 1  # period to force drop
+        self.time_drop_adjust = 1 # every score up, decrease drop time by this factor
+        self.time_stop = 0 # time player can adjust pos at bottom
+        self.time_move = 0 # minimum time interval to move
+        self.time_rotate = 0 # minimum time interval to rotate
+        self.time_before_drop = 0 # time to wait from one stop to drop
+        self.time_quick_drop = 0 # minimum time interval to drop in quick mode
+        self.time_move_quick = 0 # minimum time interval to move in quick mode
+
 
     @staticmethod
     def get_game_size(self):

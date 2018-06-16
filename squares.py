@@ -8,7 +8,7 @@ class Squares:
         self.st = st
         self.status = status
         self.screen = screen
-        self.empty_line = [False for i in range(st.square_num_x)]
+        self.empty_line = ['none' for i in range(st.square_num_x)]
         self.squares = [self.empty_line.copy() for i in range(st.square_num_y)]
         self.new_sq(self)
         self.clock = Clock(st)
@@ -64,10 +64,21 @@ class Squares:
     @staticmethod
     def new_sq(self):
         self.curr_sq = self.st.new.copy()
-        self.curr_shape = self.get_shape(self)
+        shape = self.get_shape(self)
+        self.origin_shape = shape['pos']
+        self.curr_shape = shape['pos']
+        self.curr_color = shape['color']
+        self.rotate_limit = shape['rotate']
+        self.rotate_curr = 1
         # if new squares are crashed, game over.
         if not self.valid(self, self.curr_sq, self.curr_shape):
             self.status.game_status = self.status.GAMEOVER
+
+    # return a random shape dictionary
+    @staticmethod
+    def get_shape(self):
+        shape_index = randrange(0, self.st.shape_num)
+        return self.st.shapes[shape_index].copy()
 
     @staticmethod
     def drop_straight(self):
@@ -84,8 +95,41 @@ class Squares:
     @staticmethod
     def rotate(self):
         new_shape = self.get_rotated_shape(self)
+        # regular check
         if self.valid(self, self.curr_sq, new_shape):
             self.curr_shape = new_shape
+        # move horizontally if not valid
+        else:
+            tolerance = 2
+            for i in range(tolerance):
+                # left
+                new_sq_left = self.curr_sq.copy()
+                new_sq_left[1] -= 1
+                if self.valid(self, new_sq_left, new_shape):
+                    self.curr_sq = new_sq_left
+                    self.curr_shape = new_shape
+                    return
+                # right
+                new_sq_right = self.curr_sq.copy()
+                new_sq_right[1] += 1
+                if self.valid(self, new_sq_right, new_shape):
+                    self.curr_sq = new_sq_right
+                    self.curr_shape = new_shape
+                    return
+
+
+    @staticmethod
+    def get_rotated_shape(self):
+        # rotation limit must not exceed, if exceed, reset it
+        if self.rotate_curr >= self.rotate_limit:
+            self.rotate_curr = 1
+            new_shape = self.origin_shape
+        else:
+            self.rotate_curr += 1
+            new_shape = []
+            for sq in self.curr_shape:
+                new_shape.append([sq[1], -sq[0]])
+        return new_shape
 
     @staticmethod
     def right(self):
@@ -103,7 +147,7 @@ class Squares:
 
     @staticmethod
     def stop(self):
-        # timer
+        # wait for a moment before stop, give player time to adjust
         if not self.clock.is_time_to_stop():
             self.clock.update_should_stop(True)
             return
@@ -115,22 +159,26 @@ class Squares:
             x = sq[1] + self.curr_sq[1]
             y = sq[0] + self.curr_sq[0]
             if y >= 0:
-                self.squares[y][x] = True
+                self.squares[y][x] = self.curr_color
         x = self.curr_sq[1]
         y = self.curr_sq[0]
         if y >= 0:
-            self.squares[y][x] = True
-        self.clean_full_lines(self)
+            self.squares[y][x] = self.curr_color
+        full_lines = self.clean_full_lines(self)
+        self.status.score += full_lines  # add score
         self.new_sq(self)
 
     # delete full lines and insert empty lines at the front
     @staticmethod
     def clean_full_lines(self):
+        full_lines = 0
         for index, line in enumerate(self.squares):
-            if sum(line) == self.st.square_num_x:
-                self.status.score += 1
+            if line.count('none') == 0:
+                full_lines += 1
+                self.st.time_drop *= self.st.time_drop_adjust # adjust time
                 self.squares.pop(index)
                 self.squares.insert(0, self.empty_line.copy())
+        return full_lines
 
     # validate current squares of shapes relative to center with with one drop vertically
     @staticmethod
@@ -166,26 +214,14 @@ class Squares:
                         sq[1] < 0:
             return False
         # check crash
-        return not(self.squares[sq[0]][sq[1]])
-
-    @staticmethod
-    def get_rotated_shape(self):
-        new_shape = []
-        for sq in self.curr_shape:
-            new_shape.append([sq[1], -sq[0]])
-        return new_shape
-
-    @staticmethod
-    def get_shape(self):
-        shape_index = randrange(0, self.st.shape_num)
-        return list(self.st.shapes[shape_index])
+        return self.squares[sq[0]][sq[1]] == 'none'
 
     @staticmethod
     def draw_exist_sq(self):
-        color = self.st.square_color
         for y, row in enumerate(self.squares):
             for x, square in enumerate(row):
-                self.draw_square(self, y, x, color, square)
+                color = self.st.colors[self.squares[y][x]]
+                self.draw_square(self, y, x, color)
 
     @staticmethod
     def draw_tip(self):
@@ -196,34 +232,34 @@ class Squares:
         curr_sq, self.curr_sq = self.curr_sq, curr_sq
 
         # draw their tips
-        self.draw_square(self, curr_sq[0], curr_sq[1], self.st.border_color, True, True)
-        self.draw_square(self, curr_sq[0], curr_sq[1], None, False)
+        color = self.st.colors['tip']
+        self.draw_square(self, curr_sq[0], curr_sq[1], color, True)
+        self.draw_square(self, curr_sq[0], curr_sq[1], self.st.colors['none'])
         for y, x in self.curr_shape:
             curr_y, curr_x = curr_sq[0], curr_sq[1]
-            self.draw_square(self, y + curr_y, x + curr_x, self.st.border_color, True, True)
-            self.draw_square(self, y + curr_y, x + curr_x, None, False)
-
+            self.draw_square(self, y + curr_y, x + curr_x, color, True)
+            self.draw_square(self, y + curr_y, x + curr_x, self.st.colors['none'])
 
     @staticmethod
     def draw_curr_sq(self):
-        color = self.st.square_active_color
+        # draw center
+        color = self.st.colors[self.curr_color]
         self.draw_square(self, self.curr_sq[0], self.curr_sq[1], color)
+        # draw shapes
         curr_y, curr_x = self.curr_sq[0], self.curr_sq[1]
         for y, x in self.curr_shape:
             self.draw_square(self, y + curr_y, x + curr_x, color)
 
+    # draw one single square with given information
     @staticmethod
-    def draw_square(self, y, x, color=None, square=True, border=None):
+    def draw_square(self, y, x, color, border=False):
         x_pos = x * (self.st.square_space + self.st.square_length)
         y_pos = y * (self.st.square_space + self.st.square_length)
         length = self.st.square_length
         # adding borders borders
-        if border is not None:
+        if border:
             y_pos -= self.st.square_space
             x_pos -= self.st.square_space
             length += 2 * self.st.square_space
         rect = Rect(x_pos + self.st.square_space, y_pos + self.st.square_space, length, length)
-        if square:
-            draw.rect(self.screen, color, rect)
-        else:
-            draw.rect(self.screen, self.st.square_null_color, rect)
+        draw.rect(self.screen, color, rect)

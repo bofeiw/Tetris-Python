@@ -12,4 +12,3 @@ Everyone is welcome to contribute on this.
 
 Tested with python 3.6.3 and pygame 1.9.3, and auto-pygame-download part is tested under pip 9.
 
-Thanks Shuoxin Wang and Kang Zhou, their suggestions are invaluable.

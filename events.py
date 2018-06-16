@@ -2,14 +2,16 @@ import pygame
 from sys import exit
 
 # listen to every event and respond
-def check_events(sqs, status):
+def check_events(sqs, status, AI):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
-        elif event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
             key_down(sqs, event.key, status)
-        elif event.type == pygame.KEYUP:
+        if event.type == pygame.KEYUP:
             key_up(event.key, status)
+    if status.is_AI():
+        AI.control(sqs, status)
 
 # deal with keys that are pressed down
 def key_down(sqs, key, status):
@@ -31,6 +33,9 @@ def key_down(sqs, key, status):
         status.rotate = True
     elif key == pygame.K_SPACE:
         status.straight_drop = True
+    if key == pygame.K_a:
+        status.AI = True
+        sqs.st.adjust_for_AI()
 
 # deal with keys that are released
 def key_up(key, status):
