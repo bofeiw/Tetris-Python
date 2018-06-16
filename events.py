@@ -19,6 +19,7 @@ def key_down(sqs, key, status):
         status.game_status = status.ACTIVE
     elif status.is_game_over():
         status.game_status = status.RENEW
+        status.new_AI = False
     if key == pygame.K_q:   # q stands for quit
         exit()
     if key == pygame.K_DOWN:
@@ -35,6 +36,7 @@ def key_down(sqs, key, status):
         status.straight_drop = True
     if key == pygame.K_a:
         status.AI = True
+        status.new_AI = True
         sqs.st.adjust_for_AI()
 
 # deal with keys that are released

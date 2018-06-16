@@ -76,7 +76,7 @@ class Settings:
         self.start_pos = "center"
         self.start_surface = self.adjust_start_size(self)
 
-        self.game_over = "Press any key to play again"
+        self.game_over = "Press any key to play again, press A to watch AI play"
         self.game_over_font = self.start_font
         self.game_over_size = self.start_size
         self.game_over_color = (255, 0, 0) # red
@@ -92,6 +92,7 @@ class Settings:
         self.time_before_drop = 0 # time to wait from one stop to drop
         self.time_quick_drop = 0 # minimum time interval to drop in quick mode
         self.time_move_quick = 0 # minimum time interval to move in quick mode
+        self.screen_name = 'Tetris by Bofei Wang, AI playing...'
 
 
     @staticmethod

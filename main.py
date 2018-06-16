@@ -21,7 +21,6 @@ def game_start():
     # main loop
     while True:
         pygame.display.flip()
-        #events.check_events(sqs, status)
         events.check_events(sqs, status, AI)
         if status.is_game_active():
             if sqs.update():
@@ -31,9 +30,14 @@ def game_start():
         elif status.is_game_new():
             interface.start(screen, st)
         elif status.is_game_renew():
+            AI_mode = status.new_AI
             status.refresh()
-            sqs = Squares(st, status, screens.get_sqs_surface(screen, st))
             status.game_status = status.ACTIVE
+            sqs = Squares(st, status, screens.get_sqs_surface(screen, st))
+            st = Settings()
+            if AI_mode:
+                status.AI = True
+                sqs.st.adjust_for_AI()
         else:
             raise RuntimeError # this should never happen
 

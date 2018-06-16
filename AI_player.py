@@ -120,8 +120,8 @@ def evaluate_situation(sqs):
     sqs.clean_full_lines(sqs)
     squares = array(sqs.squares).T  # convert rows to colomns
     hidden_squares = evaluate_hidden_squares(squares)
-    lowest_column, average_column  = evaluate_column(squares)
-    return evaluate_mark(full_lines, hidden_squares, lowest_column, average_column)
+    lowest_column, average_column, absolute_diff = evaluate_column(squares)
+    return evaluate_mark(full_lines, hidden_squares, lowest_column, average_column, absolute_diff)
 
 def evaluate_full_lines(sqs_given):
     sqs = copy_sqs(sqs_given)
@@ -161,36 +161,23 @@ def evaluate_column(squares):
                 break
         if not appended:
             space_left.append(len(column))
-    return (min(space_left), mean(space_left))
+    return (min(space_left), mean(space_left), max(space_left)-min(space_left))
 
-def evaluate_mark(full_lines, hidden_squares, lowest_column, average_column):
+def evaluate_mark(full_lines, hidden_squares, lowest_column, average_column, absolute_diff):
     # weights, set manually
-    full_line_weight = 10
+    full_line_weight = 20
     hidden_squares_weight = -2
-    lowest_column_weight = 0.2
-    average_column_weight = 0.1
+    lowest_column_weight = 0.3
+    average_column_weight = 0.15
+    absolute_diff_weight = -1
     mark = 0
     mark += full_lines * full_line_weight
     mark += hidden_squares * hidden_squares_weight
     mark += lowest_column * lowest_column_weight
     mark += average_column * average_column_weight
+    mark += absolute_diff * absolute_diff_weight
     return mark
-
-
-
 
 def map_pos_to_sqs(sqs, positions):
     for pos in positions:
         sqs.squares[pos[0]][pos[1]] = 'map'
-
-
-
-
-'''below are for DEBUG'''
-def print_sqs(sqs):
-    for line in sqs.squares:
-        for sq in line:
-            if sq != 'none':
-                print('O')
-            else:
-                print('.')
