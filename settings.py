@@ -84,8 +84,8 @@ class Settings:
         self.game_over_surface = self.adjust_game_over_size(self)
 
     def adjust_for_AI(self):
-        self.time_drop = 1  # period to force drop
-        self.time_drop_adjust = 1 # every score up, decrease drop time by this factor
+        self.time_drop = 0  # period to force drop
+        self.time_drop_adjust = 0 # every score up, decrease drop time by this factor
         self.time_stop = 0 # time player can adjust pos at bottom
         self.time_move = 0 # minimum time interval to move
         self.time_rotate = 0 # minimum time interval to rotate
