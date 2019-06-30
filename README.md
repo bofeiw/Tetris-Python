@@ -15,4 +15,4 @@ Everyone is welcome to contribute on this.
 Tested with python 3.6.3 and pygame 1.9.3, and auto-pygame-download part is tested under pip 9.
 
 ## Related Projects
-- https://github.com/tholman/tetris-pieces
+- https://github.com/tholman/tetris-pieces JS Tetris with AI
