@@ -2,7 +2,7 @@
 this part checks external packages and install if not exist
 """
 
-requirements = ['pygame']
+requirements = ['pygame', 'numpy']
 import sys
 
 # find and install any missing external packages
