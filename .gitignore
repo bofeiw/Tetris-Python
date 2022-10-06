@@ -6,3 +6,4 @@
 *.sqlite-journal
 ProjectSettings.json
 .suo
+.vscode

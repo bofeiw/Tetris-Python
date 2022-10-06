@@ -2,7 +2,7 @@ import pygame
 
 class Settings:
     def __init__(self):
-        # times or  speed, in seconds, you can adjust this if youre not satisfied by the default
+        # times or speed, in seconds, you can adjust this if youre not satisfied by the default
         self.time_drop = 0.8  # period to force drop
         self.time_drop_adjust = 0.99 # every score up, decrease drop time by this factor
         self.time_stop = 0.5 # time player can adjust pos at bottom
