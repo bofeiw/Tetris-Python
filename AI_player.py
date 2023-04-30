@@ -10,7 +10,7 @@ class AI:
         self.direction = None
 
     def control(self, sqs_given, status):
-        if sqs_given.curr_sq == sqs_given.st.new:
+        if sqs_given.curr_sq == sqs_given.st.new or self.direction is None:
             self.direction = make_choice(sqs_given)
         else:
             move(sqs_given, self.direction, status)
